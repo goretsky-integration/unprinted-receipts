@@ -13,7 +13,8 @@ __all__ = ('prepare_events', 'group_orders_by_unit_name')
 
 logger = structlog.stdlib.get_logger('app')
 
-OrdersGroupedByUnitName: TypeAlias = itertools.groupby[str, DetailedOrder]
+DetailedOrders: TypeAlias = Iterable[DetailedOrder]
+OrdersGroupedByUnitName: TypeAlias = Iterable[tuple[str, DetailedOrders]]
 
 
 def group_orders_by_unit_name(
