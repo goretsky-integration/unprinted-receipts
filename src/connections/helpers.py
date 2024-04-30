@@ -1,3 +1,4 @@
+import asyncio
 import functools
 from collections.abc import Callable
 from typing import ParamSpec, TypeAlias, TypeVar
@@ -19,6 +20,10 @@ def retry_on_failure(attempts: int) -> Callable[[Callback], Callback]:
         raise ValueError("Attempts must be greater than 0")
 
     def decorator(func: Callable) -> Callable:
+
+        if not asyncio.iscoroutinefunction(func):
+            raise ValueError('Function must be async')
+
         @functools.wraps(func)
         async def wrapper(*args, **kwargs) -> T:
             for _ in range(attempts):
