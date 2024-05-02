@@ -22,6 +22,7 @@ OrderHistoryItems: TypeAlias = Iterable[OrderHistoryItem]
 CANCELED_ORDER_TITLES: Final[tuple[str, ...]] = (
     'has been rejected',
     'numaralı sipariş reddedildi',
+    'Rezygnacja z zamówienia',
 )
 
 
