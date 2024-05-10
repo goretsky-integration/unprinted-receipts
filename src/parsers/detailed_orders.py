@@ -6,12 +6,15 @@ from typing import Final, TypeAlias
 
 import httpx
 from bs4 import BeautifulSoup, Tag
+import structlog.stdlib
 from pydantic import ValidationError
 
 from exceptions import DetailedOrderParseError
 from models import DetailedOrder, OrderHistoryItem, PartialOrder
 
 __all__ = ('DetailedOrderParser',)
+
+logger = structlog.stdlib.get_logger('parser')
 
 OrderHistoryItems: TypeAlias = Iterable[OrderHistoryItem]
 
@@ -168,6 +171,10 @@ class DetailedOrderParser:
                 canceled_by_user_name=rejected_by_user_name,
             )
         except ValidationError as error:
+            logger.error(
+                'Could not parse detailed order: validation error',
+                order_id=str(self.__partial_order.id),
+            )
             raise DetailedOrderParseError(
                 order_id=self.__partial_order.id,
             ) from error
