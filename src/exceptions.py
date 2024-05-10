@@ -4,6 +4,7 @@ __all__ = (
     'ApplicationError',
     'DetailedOrderParseError',
     'AccountCookiesDoNotExistError',
+    'AuthCredentialsParseError',
 )
 
 
@@ -34,3 +35,13 @@ class DetailedOrderParseError(ApplicationError):
     def __init__(self, order_id: UUID):
         super().__init__()
         self.order_id = order_id
+
+
+class AuthCredentialsParseError(ApplicationError):
+    """Raised when auth credentials could not be parsed."""
+    code: str = 'AUTH_CREDENTIALS_PARSE_ERROR'
+    message: str = 'Auth credentials parse error'
+
+    def __init__(self, account_name: str):
+        super().__init__()
+        self.account_name = account_name

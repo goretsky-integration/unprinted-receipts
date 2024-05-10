@@ -9,6 +9,7 @@ __all__ = ('parse_partial_orders_response',)
 
 def parse_partial_orders_response(
         response: httpx.Response,
+        account_name: str,
 ) -> list[PartialOrder]:
     soup = BeautifulSoup(response.text, 'lxml')
 
@@ -35,6 +36,7 @@ def parse_partial_orders_response(
             number=order_number,
             price=order_price,
             sales_channel=sales_channel,
+            account_name=account_name,
         )
         partial_orders.append(order)
 

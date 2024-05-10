@@ -76,7 +76,7 @@ class DetailedOrderParser:
     def iter_canceled_order_titles_and_order_history_items(
             self,
             order_history_items: Iterable[OrderHistoryItem],
-    ) -> itertools.product[tuple[str, OrderHistoryItem]]:
+    ) -> Iterable[tuple[str, OrderHistoryItem]]:
         return itertools.product(
             self.canceled_order_titles,
             order_history_items,

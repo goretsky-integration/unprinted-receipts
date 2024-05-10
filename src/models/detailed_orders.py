@@ -1,13 +1,18 @@
 from datetime import datetime
+from uuid import UUID
 
-from pydantic import computed_field
+from pydantic import BaseModel, computed_field
 
-from models.partial_orders import PartialOrder
+from enums import SalesChannel
 
 __all__ = ('DetailedOrder',)
 
 
-class DetailedOrder(PartialOrder):
+class DetailedOrder(BaseModel):
+    id: UUID
+    price: int
+    number: str
+    sales_channel: SalesChannel
     unit_name: str
     created_at: datetime
     canceled_at: datetime
