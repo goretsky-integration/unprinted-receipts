@@ -114,9 +114,6 @@ async def main(
         country_code=config.dodo_is.country_code,
     )
 
-    for event in events:
-        print(event)
-
     await message_queue.publish_events(
         message_queue_url=config.message_queue_url,
         events=events,
