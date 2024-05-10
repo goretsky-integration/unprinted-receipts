@@ -34,3 +34,16 @@ pythonpath = [
     "src",
     "tests",
 ]
+
+
+[tool.coverage.run]
+omit = [
+    "./src/dependencies/*",
+    "./src/config.py",
+    "./src/main.py",
+    "./src/message_queue.py",
+    "./src/dodo_is_context.py",
+    "./src/auth_credentials_context.py",
+    "./src/time_helpers.py",
+    "./src/exceptions.py",
+]

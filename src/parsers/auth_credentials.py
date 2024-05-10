@@ -1,3 +1,5 @@
+import json
+
 import httpx
 import structlog
 from pydantic import ValidationError
@@ -19,10 +21,9 @@ def parse_account_cookies_response(
         response: httpx.Response,
         account_name: str,
 ) -> AccountCookies:
-    response_data: dict = response.json()
-
     try:
+        response_data: dict = response.json()
         return AccountCookies.model_validate(response_data)
-    except ValidationError:
+    except (json.JSONDecodeError, ValidationError) as error:
         logger.error('No cookies of account', account_name=account_name)
-        raise AuthCredentialsParseError(account_name=account_name)
+        raise AuthCredentialsParseError(account_name=account_name) from error
