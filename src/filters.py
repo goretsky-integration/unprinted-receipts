@@ -21,11 +21,11 @@ T = TypeVar('T')
 
 def filter_shift_manager_account_names(
         account_names: Iterable[str],
-) -> list[str]:
-    return [
+) -> set[str]:
+    return {
         account_name for account_name in account_names
         if account_name.startswith('shift_manager')
-    ]
+    }
 
 
 def is_order_sales_channel(
