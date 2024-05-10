@@ -14,8 +14,6 @@ from models import DetailedOrder, OrderHistoryItem, PartialOrder
 
 __all__ = ('DetailedOrderParser',)
 
-logger = structlog.stdlib.get_logger('parser')
-
 OrderHistoryItems: TypeAlias = Iterable[OrderHistoryItem]
 
 
