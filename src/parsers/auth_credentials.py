@@ -2,6 +2,7 @@ import httpx
 import structlog
 from pydantic import ValidationError
 
+from exceptions import AuthCredentialsParseError
 from models import AccountCookies
 
 __all__ = ('parse_accounts_response', 'parse_account_cookies_response')
@@ -24,4 +25,4 @@ def parse_account_cookies_response(
         return AccountCookies.model_validate(response_data)
     except ValidationError:
         logger.error('No cookies of account', account_name=account_name)
-        raise
+        raise AuthCredentialsParseError(account_name=account_name)

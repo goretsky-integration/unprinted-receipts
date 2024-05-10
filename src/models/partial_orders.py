@@ -12,3 +12,4 @@ class PartialOrder(BaseModel):
     price: int
     number: str
     sales_channel: SalesChannel
+    account_name: str

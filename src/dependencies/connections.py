@@ -23,6 +23,7 @@ __all__ = (
 async def get_auth_credentials_storage_connection(
         http_client: AuthCredentialsStorageHttpClient = Depends(
             get_auth_credentials_storage_http_client,
+            use_cache=False,
         ),
 ) -> AuthCredentialsStorageConnection:
     yield AuthCredentialsStorageConnection(http_client)
@@ -31,12 +32,16 @@ async def get_auth_credentials_storage_connection(
 async def get_units_storage_connection(
         http_client: UnitsStorageHttpClient = Depends(
             get_units_storage_http_client,
+            use_cache=False,
         ),
 ) -> UnitsStorageConnection:
     yield UnitsStorageConnection(http_client)
 
 
 async def get_dodo_is_connection(
-        http_client: DodoIsHttpClient = Depends(get_dodo_is_http_client),
+        http_client: DodoIsHttpClient = Depends(
+            get_dodo_is_http_client,
+            use_cache=False,
+        ),
 ) -> DodoIsConnection:
     yield DodoIsConnection(http_client)
