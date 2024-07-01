@@ -1,6 +1,4 @@
-import datetime
-from collections.abc import AsyncGenerator
-from uuid import UUID
+from collections.abc import Mapping
 
 import httpx
 
@@ -14,39 +12,34 @@ class DodoIsConnection:
     def __init__(self, http_client: DodoIsHttpClient):
         self.__http_client = http_client
 
-    async def iter_partial_orders(
+    async def get_shift_management_partial_index(
             self,
             *,
-            cookies: dict[str, str],
-            date: datetime.date,
-            page: int = 1,
-    ) -> AsyncGenerator[httpx.Response, None]:
-        url = '/Managment/ShiftManagment/PartialShiftOrders'
-        while True:
-            query_params = {
-                'page': page,
-                'date': f'{date:%Y-%m-%d}',
-                'orderStateFilter': 'Failure',
-            }
-            response = await self.__http_client.get(
-                url=url,
-                params=query_params,
-                cookies=cookies,
-            )
-            yield response
-            page += 1
-
-    async def get_detailed_order(
-            self,
-            *,
-            cookies: dict[str, str],
-            order_id: UUID,
+            cookies: Mapping[str, str],
     ) -> httpx.Response:
-        url = '/Managment/ShiftManagment/Order'
-        query_params = {'orderUUId': order_id.hex}
+        url = '/Managment/ShiftManagment/PartialIndex'
+
+        response = await self.__http_client.get(
+            url=url,
+            cookies=dict(cookies),
+        )
+
+        return response
+
+    async def get_unprinted_receipts(
+            self,
+            *,
+            cookies: Mapping[str, str],
+            cash_box_id: int,
+            shift_id: int,
+    ) -> httpx.Response:
+        url = '/Managment/ShiftManagment/ZReport'
+        query_params = {'cashBoxId': cash_box_id, 'shift_id': shift_id}
+
         response = await self.__http_client.get(
             url=url,
             params=query_params,
-            cookies=cookies,
+            cookies=dict(cookies),
         )
+
         return response
