@@ -20,6 +20,7 @@ from filters import filter_valid_canceled_orders
 from mappers import prepare_events
 from parsers import parse_account_cookies_response, parse_units_response
 from time_helpers import get_yesterday_this_moment
+from units import AccountsUnits, load_accounts_units_from_file
 
 logger = structlog.stdlib.get_logger('app')
 
@@ -79,11 +80,9 @@ async def main(
             get_yesterday_this_moment,
             use_cache=False,
         ),
+        accounts_units: AccountsUnits = Depends(load_accounts_units_from_file),
         config: Config = Depends(get_config),
 ):
-    units_response = await units_storage_connection.get_units()
-    units = parse_units_response(units_response)
-
     account_names = (
         await auth_credentials_context.get_shift_manager_account_names()
     )
