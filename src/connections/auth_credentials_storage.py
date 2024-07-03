@@ -14,16 +14,6 @@ class AuthCredentialsStorageConnection:
     def __init__(self, http_client: AuthCredentialsStorageHttpClient):
         self.__http_client = http_client
 
-    async def get_accounts(self) -> httpx.Response:
-        url = '/accounts/'
-        logger.debug('Retrieving accounts')
-        response = await self.__http_client.get(url)
-        logger.debug(
-            'Accounts retrieved',
-            status_code=response.status_code,
-        )
-        return response
-
     async def get_account_cookies(self, account_name: str) -> httpx.Response:
         url = '/auth/cookies/'
         query_params = {'account_name': account_name}
