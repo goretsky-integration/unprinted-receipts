@@ -1,20 +1,13 @@
-import json
-
 import httpx
-import structlog
 from pydantic import ValidationError
 
 from exceptions import AuthCredentialsParseError
+from logger import create_logger
 from models import AccountCookies
 
-__all__ = ('parse_accounts_response', 'parse_account_cookies_response')
+__all__ = ('parse_account_cookies_response',)
 
-logger = structlog.stdlib.get_logger('app')
-
-
-def parse_accounts_response(response: httpx.Response) -> set[str]:
-    response_data: dict = response.json()
-    return {account['name'] for account in response_data}
+logger = create_logger('parser')
 
 
 def parse_account_cookies_response(
@@ -22,8 +15,16 @@ def parse_account_cookies_response(
         account_name: str,
 ) -> AccountCookies:
     try:
-        response_data: dict = response.json()
-        return AccountCookies.model_validate(response_data)
-    except (json.JSONDecodeError, ValidationError) as error:
-        logger.error('No cookies of account', account_name=account_name)
+        return AccountCookies.model_validate_json(response.text)
+    except ValidationError as error:
+        logger.error(
+            'Account cookies response does not match the expected schema',
+            extra={'account_name': account_name},
+        )
         raise AuthCredentialsParseError(account_name=account_name) from error
+    except ValueError:
+        logger.error(
+            'Account cookies response is not a JSON',
+            extra={'account_name': account_name},
+        )
+        raise AuthCredentialsParseError(account_name=account_name)

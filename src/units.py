@@ -13,7 +13,7 @@ __all__ = (
 
 Units: TypeAlias = tuple[Unit, ...]
 UNITS_FILE_PATH: Final[pathlib.Path] = (
-        pathlib.Path(__file__).parent.parent / 'accounts_units.json'
+        pathlib.Path(__file__).parent.parent / 'units.json'
 )
 
 

@@ -1,12 +1,11 @@
 import httpx
-import structlog
-from structlog.contextvars import bound_contextvars
 
+from logger import create_logger
 from new_types import AuthCredentialsStorageHttpClient
 
 __all__ = ('AuthCredentialsStorageConnection',)
 
-logger = structlog.stdlib.get_logger('app')
+logger = create_logger('auth_credentials_connection')
 
 
 class AuthCredentialsStorageConnection:
@@ -17,11 +16,18 @@ class AuthCredentialsStorageConnection:
     async def get_account_cookies(self, account_name: str) -> httpx.Response:
         url = '/auth/cookies/'
         query_params = {'account_name': account_name}
-        with bound_contextvars(account_name=account_name):
-            logger.debug('Retrieving account cookies')
-            response = await self.__http_client.get(url, params=query_params)
-            logger.debug(
-                'Account cookies retrieved',
-                status_code=response.status_code,
-            )
-            return response
+
+        logger.debug(
+            'Requesting account cookies',
+            extra={'query_params': query_params},
+        )
+        response = await self.__http_client.get(url, params=query_params)
+        logger.info(
+            'Account cookies response received',
+            extra={
+                'query_params': query_params,
+                'status_code': response.status_code,
+                'response_body': response.text,
+            },
+        )
+        return response

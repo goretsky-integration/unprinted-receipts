@@ -4,6 +4,7 @@ __all__ = (
     'AuthCredentialsParseError',
     'HttpError',
     'UnexpectedError',
+    'UnprintedReceiptsPageParseError',
 )
 
 
@@ -54,3 +55,14 @@ class UnexpectedError(ApplicationError):
     def __init__(self, exception: Exception):
         super().__init__()
         self.exception = exception
+
+
+class UnprintedReceiptsPageParseError(ApplicationError):
+    """Raised when unprinted receipts page could not be parsed."""
+    code: str = 'UNPRINTED_RECEIPTS_PAGE_PARSE_ERROR'
+    message: str = 'Unprinted receipts page parse error'
+
+    def __init__(self, unit_name: str, response_body: str):
+        super().__init__()
+        self.unit_name = unit_name
+        self.response_body = response_body

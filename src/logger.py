@@ -25,6 +25,8 @@ def setup_logging_config(logging_config: dict[str, Any]) -> None:
     logging.config.dictConfig(logging_config)
 
 
-def load_logging_config_from_file(file_path: pathlib.Path) -> dict[str, Any]:
+def load_logging_config_from_file(
+        file_path: pathlib.Path = LOGGING_CONFIG_FILE_PATH,
+) -> dict[str, Any]:
     config_json = file_path.read_text(encoding='utf-8')
     return json.loads(config_json)

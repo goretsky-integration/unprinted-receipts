@@ -1,7 +1,6 @@
 import pathlib
 import tomllib
 from dataclasses import dataclass
-from zoneinfo import ZoneInfo
 
 from enums import CountryCode
 
@@ -11,7 +10,7 @@ CONFIG_FILE_PATH = pathlib.Path(__file__).parent.parent / 'config.toml'
 
 
 @dataclass(frozen=True, slots=True)
-class StorageConfig:
+class AuthCredentialsStorageConfig:
     base_url: str
     http_client_timeout: int
 
@@ -33,11 +32,9 @@ class SentryConfig:
 @dataclass(frozen=True, slots=True)
 class Config:
     app_name: str
-    timezone: ZoneInfo
     message_queue_url: str
     sentry: SentryConfig
-    auth_credentials_storage: StorageConfig
-    units_storage: StorageConfig
+    auth_credentials_storage: AuthCredentialsStorageConfig
     dodo_is: DodoIsConfig
 
 
@@ -46,12 +43,9 @@ def get_config() -> Config:
     config = tomllib.loads(config_text)
 
     app_name = config['app']['name']
-    timezone = ZoneInfo(config['app']['timezone'])
     message_queue_url = config['message_queue']['url']
 
     auth_credentials_storage = config['auth_credentials_storage']
-
-    units_storage = config['units_storage']
 
     sentry_config = config['sentry']
     sentry = SentryConfig(
@@ -63,16 +57,11 @@ def get_config() -> Config:
 
     return Config(
         app_name=app_name,
-        timezone=timezone,
         message_queue_url=message_queue_url,
         sentry=sentry,
-        auth_credentials_storage=StorageConfig(
+        auth_credentials_storage=AuthCredentialsStorageConfig(
             base_url=auth_credentials_storage['base_url'],
             http_client_timeout=auth_credentials_storage['http_client_timeout'],
-        ),
-        units_storage=StorageConfig(
-            base_url=units_storage['base_url'],
-            http_client_timeout=units_storage['http_client_timeout'],
         ),
         dodo_is=DodoIsConfig(
             country_code=CountryCode(config['dodo_is']['country_code']),
