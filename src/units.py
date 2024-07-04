@@ -3,24 +3,21 @@ from typing import Final, TypeAlias
 
 from pydantic import TypeAdapter
 
-from models.units import AccountUnits
+from models.units import Unit
 
 __all__ = (
-    'ACCOUNTS_UNITS_FILE_PATH',
-    'load_accounts_units_from_file',
-    'AccountsUnits',
+    'Units',
+    'UNITS_FILE_PATH',
+    'load_units_from_file',
 )
 
-AccountsUnits: TypeAlias = tuple[AccountUnits, ...]
-
-ACCOUNTS_UNITS_FILE_PATH: Final[pathlib.Path] = (
+Units: TypeAlias = tuple[Unit, ...]
+UNITS_FILE_PATH: Final[pathlib.Path] = (
         pathlib.Path(__file__).parent.parent / 'accounts_units.json'
 )
 
 
-def load_accounts_units_from_file(
-        file_path: pathlib.Path = ACCOUNTS_UNITS_FILE_PATH
-) -> AccountsUnits:
+def load_units_from_file(file_path: pathlib.Path = UNITS_FILE_PATH) -> Units:
     accounts_units_json = file_path.read_text(encoding='utf-8')
-    type_adapter = TypeAdapter(AccountsUnits)
+    type_adapter = TypeAdapter(Units)
     return type_adapter.validate_json(accounts_units_json)
