@@ -69,7 +69,7 @@ def parse_shift_management_index_page(
 
         href: str = a_tag.get('href', '')
 
-        if '/Management/ShiftManagement/ZReport' not in href:
+        if '/Managment/ShiftManagment/ZReport' not in href:
             continue
 
         _, query_params = href.split('?')
