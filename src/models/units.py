@@ -6,6 +6,6 @@ __all__ = ('Unit',)
 
 
 class Unit(BaseModel):
-    id: int
     name: str
     uuid: UUID
+    account_name: str
