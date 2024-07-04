@@ -5,6 +5,7 @@ __all__ = (
     'DetailedOrderParseError',
     'AccountCookiesDoNotExistError',
     'AuthCredentialsParseError',
+    'HttpError',
 )
 
 
@@ -45,3 +46,13 @@ class AuthCredentialsParseError(ApplicationError):
     def __init__(self, account_name: str):
         super().__init__()
         self.account_name = account_name
+
+
+class HttpError(ApplicationError):
+    """Raised when HTTP request failed."""
+    code: str = 'HTTP_ERROR'
+    message: str = 'HTTP request failed'
+
+    def __init__(self, **kwargs):
+        super().__init__()
+        self.kwargs = kwargs
