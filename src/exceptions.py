@@ -3,6 +3,7 @@ __all__ = (
     'AccountCookiesDoNotExistError',
     'AuthCredentialsParseError',
     'HttpError',
+    'UnexpectedError',
 )
 
 
@@ -43,3 +44,13 @@ class HttpError(ApplicationError):
     def __init__(self, **kwargs):
         super().__init__()
         self.kwargs = kwargs
+
+
+class UnexpectedError(ApplicationError):
+    """Raised when unexpected error occurred."""
+    code: str = 'UNEXPECTED_ERROR'
+    message: str = 'Unexpected error occurred'
+
+    def __init__(self, exception: Exception):
+        super().__init__()
+        self.exception = exception
