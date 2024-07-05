@@ -19,11 +19,7 @@ This service is intended for identifying orders without printed receipts for the
 
 ## Setup and run the service
 
-****### 1. Clone the repository
-
-```shell
-git clone https://github.com/goretsky-integration/canceled-orders
-```
+### 1. Clone the repository
 
 ### 2. Create poetry virtual environment
 
@@ -43,48 +39,26 @@ poetry shell
 poetry install --without dev
 ```
 
-### 5. Set up config file [instruction](#set-up-config-file)
+### 5. Create and set up application config file
 
 ```shell
 cp config.example.toml config.toml
 ```
 
-### 6. Run the service
+### 6. Create and set up logging config file
+
+```shell
+cp logging_config.example.json logging_config.json
+```
+
+### 7. Create and set up the units file
+
+```shell
+touch units.json
+```
+
+### 8. Run the service
 
 ```shell
 python src/main.py
-```
-
----
-
-## Run tests
-
-### 1. Clone the repository
-
-```shell
-git clone https://github.com/goretsky-integration/canceled-orders
-```
-
-### 2. Create poetry virtual environment
-
-```shell
-poetry env use python3.11
-```
-
-### 3. Activate it
-
-```shell
-poetry shell
-```
-
-### 4. Install dependencies
-
-```shell
-poetry install
-```
-
-### 5. Run the tests
-
-```shell
-pytest
 ```
