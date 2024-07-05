@@ -1,30 +1,24 @@
 import asyncio
-import datetime
-from collections.abc import Iterable
-from typing import TypeVar
 
 from fast_depends import Depends, inject
 
-import message_queue
-from connections.dodo_is import DodoIsConnection
-from context.dodo_is import (
-    OrdersWithoutPrintedReceiptsFetcher,
-    ShiftsPartialInfoFetcher,
-)
-from logger import setup_logging_config, load_logging_config_from_file
 from config import Config, get_config
 from connections.auth_credentials_storage import (
     AuthCredentialsStorageConnection,
 )
+from connections.dodo_is import DodoIsConnection
 from context.auth_credentials import AccountCookiesFetcher
-from dependencies import (
-    get_auth_credentials_storage_connection, get_dodo_is_connection,
+from context.dodo_is import (
+    OrdersWithoutPrintedReceiptsFetcher,
+    ShiftsPartialInfoFetcher,
 )
+from dependencies import (
+    get_auth_credentials_storage_connection,
+    get_dodo_is_connection,
+)
+from logger import load_logging_config_from_file, setup_logging_config
 from mappers import prepare_events
 from message_queue import publish_events
-from models import OrderWithoutPrintedReceipt
-from parsers import parse_account_cookies_response
-from time_helpers import get_yesterday_this_moment
 from units import Units, load_units_from_file
 
 
