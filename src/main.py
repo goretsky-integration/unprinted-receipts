@@ -1,5 +1,6 @@
 import asyncio
 
+import sentry_sdk
 from fast_depends import Depends, inject
 
 from config import Config, get_config
@@ -34,6 +35,13 @@ async def main(
         config: Config = Depends(get_config),
         logging_config: dict = Depends(load_logging_config_from_file),
 ):
+    if config.sentry.is_enabled:
+        sentry_sdk.init(
+            dsn=config.sentry.dsn,
+            traces_sample_rate=config.sentry.traces_sample_rate,
+            profiles_sample_rate=config.sentry.profiles_sample_rate,
+        )
+
     setup_logging_config(logging_config)
 
     account_cookies_fetcher = AccountCookiesFetcher(
