@@ -1,25 +1,19 @@
 [app]
-name = "name of app"
-timezone = "Europe/Moscow"
-
-[sentry]
-is_enabled = false
-dsn = ""
-traces_sample_rate = 1.0
-profiles_sample_rate = 1.0
+name = ""
 
 [message_queue]
 url = ""
 
 [auth_credentials_storage]
 base_url = ""
-http_client_timeout = 30
-
-
-[units_storage]
-base_url = ""
-http_client_timeout = 30
+http_client_timeout = 60
 
 [dodo_is]
-country_code = "ru"
-http_client_timeout = 30
+country_code = ""
+http_client_timeout = 60
+
+[sentry]
+is_enabled = false
+dsn = ""
+traces_sample_rate = 1.0
+profiles_sample_rate = 1.0
