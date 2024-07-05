@@ -69,12 +69,14 @@ async def main(
             cookies=result.cookies,
         )
 
-    shifts_partial_info = await shifts_partial_info_fetcher.fetch_all()
+    shifts_partial_info_fetch_result = (
+        await shifts_partial_info_fetcher.fetch_all()
+    )
 
     orders_without_printed_receipts_fetcher = (
         OrdersWithoutPrintedReceiptsFetcher(dodo_is_connection)
     )
-    for shift_partial_info in shifts_partial_info:
+    for shift_partial_info in shifts_partial_info_fetch_result.results:
         account_name = unit_name_to_account_name[shift_partial_info.unit_name]
         cookies = account_name_to_cookies[account_name]
 
@@ -83,22 +85,19 @@ async def main(
             cookies=cookies,
         )
 
-    orders_without_printed_receipts = (
+    orders_without_printed_receipts_fetch_result = (
         await orders_without_printed_receipts_fetcher.fetch_all()
     )
 
     events = prepare_events(
         unit_name_to_uuid={unit.name: unit.uuid for unit in units},
-        orders=orders_without_printed_receipts.results,
+        orders=orders_without_printed_receipts_fetch_result.results,
     )
 
     await publish_events(
         message_queue_url=config.message_queue_url,
         events=events,
     )
-
-
-
 
 
 if __name__ == '__main__':

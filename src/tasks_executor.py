@@ -1,6 +1,6 @@
 import asyncio
 import itertools
-from collections.abc import Coroutine, Iterable
+from collections.abc import AsyncGenerator, Coroutine, Iterable
 from typing import Any, TypeVar
 
 T = TypeVar('T')
@@ -18,11 +18,16 @@ def batched(iterable, n):
 
 
 async def execute_batched_tasks(
-        tasks: Iterable[asyncio.Task[T] | Coroutine[Any, Any, T]],
+        coroutines: Iterable[Coroutine[Any, Any, T]],
         *,
         batch_size: int = 10,
-) -> list[T | Exception]:
-    result = []
-    for tasks_batch in batched(tasks, n=batch_size):
-        result += await asyncio.gather(*tasks_batch, return_exceptions=True)
-    return result
+) -> AsyncGenerator[list[asyncio.Task[T]], None]:
+    for coroutines_batch in batched(coroutines, n=batch_size):
+
+        async with asyncio.TaskGroup() as task_group:
+            tasks = [
+                task_group.create_task(coroutine)
+                for coroutine in coroutines_batch
+            ]
+
+        yield tasks
