@@ -8,6 +8,12 @@ This service is intended for identifying orders without printed receipts for the
 
 ---
 
+## How does the service work?
+
+Check in wiki: https://github.com/goretsky-integration/unprinted-receipts/wiki/How-does-the-service-work
+
+---
+
 ## Loggers
 
 - auth_credentials_fetcher.
