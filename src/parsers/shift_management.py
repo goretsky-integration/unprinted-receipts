@@ -78,6 +78,8 @@ def parse_shift_management_index_page(
 
     shift_partials: list[ShiftPartialInfo] = []
 
+    all_query_params: set[str] = set()
+
     for a_tag in a_tags:
 
         href: str = a_tag.get('href', '')
@@ -86,9 +88,9 @@ def parse_shift_management_index_page(
             continue
 
         _, query_params = href.split('?')
+        all_query_params.add(query_params)
 
-        query_params: str
-
+    for query_params in all_query_params:
         cash_box_id = shift_id = None
 
         for query_param in query_params.split('&'):
