@@ -1,4 +1,3 @@
-import asyncio
 from dataclasses import dataclass
 
 from connections.auth_credentials_storage import (
@@ -8,14 +7,13 @@ from exceptions import ApplicationError, UnexpectedError
 from logger import create_logger
 from models import AccountCookies
 from parsers import parse_account_cookies_response
+from tasks_executor import execute_batched_tasks
 
 __all__ = (
     'AccountCookiesFetcher',
     'AccountCookiesFetchResult',
     'AccountCookiesFetchAllResult',
 )
-
-from tasks_executor import execute_batched_tasks
 
 logger = create_logger('auth_credentials_fetcher')
 

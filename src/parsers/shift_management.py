@@ -1,116 +1,94 @@
-import httpx
-from bs4 import BeautifulSoup, Tag
+from uuid import UUID
 
-from exceptions import UnprintedReceiptsPageParseError
-from models import OrderWithoutPrintedReceipt, ShiftPartialInfo
+import httpx
+from pydantic import TypeAdapter, ValidationError
+
+from exceptions import APIResponseParseError
+from models import Order, Shift
 
 __all__ = (
-    'ShiftPartialInfo',
-    'OrderWithoutPrintedReceipt',
-    'parse_shift_management_index_page',
-    'parse_unprinted_receipts_page',
+    'parse_shifts_response',
+    'parse_shift_response',
 )
 
 
-def parse_unprinted_receipts_page(
+def parse_shifts_response(
         response: httpx.Response,
-        unit_name: str,
-) -> list[OrderWithoutPrintedReceipt]:
-    soup = BeautifulSoup(response.text, 'lxml')
+        unit_uuid: UUID,
+) -> list[Shift]:
+    response_data = response.json()
 
-    unit_name_tag = soup.find('div', attrs={'class': 'headerDepartment'})
-
-    if unit_name_tag is None:
-        raise UnprintedReceiptsPageParseError(
-            unit_name=unit_name,
-            response_body=response.text,
+    try:
+        shifts = response_data['Shifts']
+    except KeyError:
+        raise APIResponseParseError(
+            message='missing "Shifts" object',
+            response=response,
         )
 
-    unit_name = unit_name_tag.text.strip()
-
-    if ('В смене нет возвратов, незакрытых чеков и неоплаченных заказов'
-            in soup.text):
-        return []
-
-    table_rows = soup.find_all('tr')
-
-    if not table_rows:
-        raise UnprintedReceiptsPageParseError(
-            unit_name=unit_name,
-            response_body=response.text,
+    if not isinstance(shifts, list):
+        raise APIResponseParseError(
+            message='"Shifts" field is not a list',
+            response=response,
         )
 
-    orders_without_printed_receipts: list[OrderWithoutPrintedReceipt] = []
+    shifts = [shift | {'unit_uuid': unit_uuid} for shift in shifts]
 
-    for table_row in table_rows[1:]:
-        tds = table_row.find_all('td')
+    type_adapter = TypeAdapter(list[Shift])
 
-        if len(tds) != 5:
-            continue
-
-        _, order_number_td, order_price_td, _, _ = table_row.find_all('td')
-
-        order_number_td: Tag
-        order_price_td: Tag
-
-        order_number = order_number_td.text.strip()
-        order_price = order_price_td.text.strip().replace(' ', '')
-
-        orders_without_printed_receipts.append(
-            OrderWithoutPrintedReceipt(
-                unit_name=unit_name,
-                number=order_number,
-                price=int(order_price.replace('\xa0i', '')
-                          .replace('\xa0', '')),
-            ),
+    try:
+        return type_adapter.validate_python(shifts)
+    except ValidationError:
+        raise APIResponseParseError(
+            message='failed to validate "Shift" objects',
+            response=response,
         )
 
-    return orders_without_printed_receipts
 
-
-def parse_shift_management_index_page(
+def parse_shift_response(
         response: httpx.Response,
-        unit_name: str,
-) -> list[ShiftPartialInfo]:
-    soup = BeautifulSoup(response.text, 'lxml')
+        unit_uuid: UUID,
+) -> list[Order]:
+    response_data = response.json()
 
-    a_tags = soup.find_all('a')
-
-    shift_partials: list[ShiftPartialInfo] = []
-
-    all_query_params: set[str] = set()
-
-    for a_tag in a_tags:
-
-        href: str = a_tag.get('href', '')
-
-        if '/Managment/ShiftManagment/ZReport' not in href:
-            continue
-
-        _, query_params = href.split('?')
-        all_query_params.add(query_params)
-
-    for query_params in all_query_params:
-        cash_box_id = shift_id = None
-
-        for query_param in query_params.split('&'):
-            query_param_key, query_param_value = query_param.split('=')
-
-            if query_param_key == 'cashBoxId':
-                cash_box_id = query_param_value
-
-            if query_param_key == 'shiftId':
-                shift_id = query_param_value
-
-        if not all((cash_box_id, shift_id)):
-            continue
-
-        shift_partials.append(
-            ShiftPartialInfo(
-                unit_name=unit_name,
-                cash_box_id=cash_box_id,
-                shift_id=shift_id,
-            ),
+    try:
+        orders_statistics = response_data['OrdersStatistic']
+    except KeyError:
+        raise APIResponseParseError(
+            message='missing "OrdersStatistic" object',
+            response=response,
         )
 
-    return shift_partials
+    if not isinstance(orders_statistics, dict):
+        raise APIResponseParseError(
+            message='"OrdersStatistic" field is not an object',
+            response=response,
+        )
+
+    try:
+        prepaid_orders_statistics = orders_statistics['Prepaid']
+    except KeyError:
+        raise APIResponseParseError(
+            message='missing "Prepaid" object',
+            response=response,
+        )
+
+    if not isinstance(prepaid_orders_statistics, dict):
+        raise APIResponseParseError(
+            message='"Prepaid" field is not an object',
+            response=response,
+        )
+
+    orders: list[Order] = []
+    type_adapter = TypeAdapter(list[Order])
+
+    for cash_box in prepaid_orders_statistics['Items']:
+        try:
+            orders += type_adapter.validate_python(cash_box['Items'])
+        except ValidationError:
+            raise APIResponseParseError(
+                message='failed to validate "Order" objects',
+                response=response,
+            )
+
+    return orders
