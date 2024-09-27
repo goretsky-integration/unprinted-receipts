@@ -65,6 +65,6 @@ class APIResponseParseError(ApplicationError):
     message: str = 'API response parse error'
 
     def __init__(self, message: str, response: httpx.Response):
-        super().__init__()
         self.message = f'{self.message}: {message}'
+        super().__init__()
         self.response = response
