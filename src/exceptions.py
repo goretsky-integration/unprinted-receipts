@@ -1,10 +1,12 @@
+import httpx
+
 __all__ = (
     'ApplicationError',
     'AccountCookiesDoNotExistError',
     'AuthCredentialsParseError',
     'HttpError',
     'UnexpectedError',
-    'UnprintedReceiptsPageParseError',
+    'APIResponseParseError',
 )
 
 
@@ -57,12 +59,12 @@ class UnexpectedError(ApplicationError):
         self.exception = exception
 
 
-class UnprintedReceiptsPageParseError(ApplicationError):
-    """Raised when unprinted receipts page could not be parsed."""
-    code: str = 'UNPRINTED_RECEIPTS_PAGE_PARSE_ERROR'
-    message: str = 'Unprinted receipts page parse error'
+class APIResponseParseError(ApplicationError):
+    """Raised when API response could not be parsed."""
+    code: str = 'API_RESPONSE_PARSE_ERROR'
+    message: str = 'API response parse error'
 
-    def __init__(self, unit_name: str, response_body: str):
+    def __init__(self, message: str, response: httpx.Response):
         super().__init__()
-        self.unit_name = unit_name
-        self.response_body = response_body
+        self.message = f'{self.message}: {message}'
+        self.response = response

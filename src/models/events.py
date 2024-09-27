@@ -2,14 +2,14 @@ from uuid import UUID
 
 from pydantic import BaseModel, Field, conlist
 
-from models.dodo_is import OrderWithoutPrintedReceipt
+from models.orders import Order
 
 __all__ = ('EventPayload', 'Event')
 
 
 class EventPayload(BaseModel):
     unit_name: str
-    orders: conlist(OrderWithoutPrintedReceipt, min_length=1)
+    orders: conlist(Order, min_length=1)
 
 
 class Event(BaseModel):
