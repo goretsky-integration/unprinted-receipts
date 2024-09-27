@@ -1,3 +1,4 @@
+import traceback
 from uuid import UUID
 
 import httpx
@@ -83,8 +84,9 @@ def parse_shift_response(
     type_adapter = TypeAdapter(list[Order])
 
     for cash_box in prepaid_orders_statistics['Items']:
+        items = [item | {'unit_uuid': unit_uuid} for item in cash_box['Items']]
         try:
-            orders += type_adapter.validate_python(cash_box['Items'])
+            orders += type_adapter.validate_python(items)
         except ValidationError:
             raise APIResponseParseError(
                 message='failed to validate "Order" objects',
