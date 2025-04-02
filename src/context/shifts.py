@@ -109,7 +109,7 @@ class ShiftDetailFetcher:
             cookies: dict[str, str],
     ) -> list[Order]:
         response = await self.__connection.get_shift(
-            shift_legacy_id=shift.legacy_id,
+            shift_id=shift.id,
             cookies=cookies,
         )
         return parse_shift_response(

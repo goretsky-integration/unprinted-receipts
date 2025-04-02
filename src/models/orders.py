@@ -8,6 +8,6 @@ __all__ = ('Order',)
 
 class Order(BaseModel):
     unit_uuid: UUID
-    legacy_id: Annotated[int, Field(validation_alias='LegacyId')]
+    id: Annotated[UUID, Field(validation_alias='Id')]
     number: Annotated[str, Field(validation_alias='Number')]
     price: Annotated[int, Field(validation_alias='Sum')]

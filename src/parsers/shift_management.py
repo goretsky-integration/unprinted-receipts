@@ -18,7 +18,6 @@ def parse_shifts_response(
         unit_uuid: UUID,
 ) -> list[Shift]:
     response_data = response.json()
-
     try:
         shifts = response_data['Shifts']
     except KeyError:
@@ -36,7 +35,6 @@ def parse_shifts_response(
     shifts = [shift | {'unit_uuid': unit_uuid} for shift in shifts]
 
     type_adapter = TypeAdapter(list[Shift])
-
     try:
         return type_adapter.validate_python(shifts)
     except ValidationError:
