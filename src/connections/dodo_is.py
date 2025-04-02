@@ -1,3 +1,4 @@
+from uuid import UUID
 import httpx
 
 from logger import create_logger
@@ -27,10 +28,10 @@ class DodoIsConnection:
 
     async def get_shift(
             self,
-            shift_legacy_id: int,
+            shift_id: UUID,
             cookies: dict[str, str],
     ) -> httpx.Response:
-        url = f'/api/shifts/{shift_legacy_id}'
+        url = f'/api/shifts/{shift_id.hex}'
 
         response = await self.__http_client.get(url=url, cookies=cookies)
 

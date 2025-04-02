@@ -9,6 +9,6 @@ __all__ = ('Shift',)
 
 class Shift(BaseModel):
     unit_uuid: UUID
-    legacy_id: Annotated[int, Field(validation_alias='LegacyId')]
+    id: Annotated[UUID, Field(validation_alias='Id')]
     started_at: Annotated[datetime, Field(validation_alias='ShiftStartedAt')]
     ended_at: Annotated[datetime | None, Field(validation_alias='ShiftEndedAt')]

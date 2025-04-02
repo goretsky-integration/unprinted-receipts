@@ -63,7 +63,6 @@ async def main(
         shifts_fetcher.register_units(unit_uuids=unit_uuids, cookies=cookies)
 
     shifts = await shifts_fetcher.fetch_all()
-
     shift_detail_fetcher = ShiftDetailFetcher(dodo_is_connection)
     for shift in shifts.results:
         account_name = units_mapper.uuid_to_account_name[shift.unit_uuid]
@@ -71,7 +70,6 @@ async def main(
         shift_detail_fetcher.register_shift(shift=shift, cookies=cookies)
 
     orders_fetch_result = await shift_detail_fetcher.fetch_all()
-
     events = prepare_events(
         unit_uuid_to_name=units_mapper.uuid_to_name,
         orders=orders_fetch_result.results,
